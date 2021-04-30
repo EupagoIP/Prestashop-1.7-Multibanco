@@ -1,2 +1,2 @@
-# Prestashop-1.7---Multibanco
+# Prestashop-1.7-Multibanco
 Payment Gateway for Prestashop 1.7
