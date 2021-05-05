@@ -39,7 +39,7 @@ class EupagoMB extends PaymentModule
         $this->module_key = 'bcfcaaf905b30348b5f3a66365b59e78';
         $this->name = 'eupagomb';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.2';
+        $this->version = '1.8.3';
         $this->author = 'euPago';
         $this->need_instance = 1;
 

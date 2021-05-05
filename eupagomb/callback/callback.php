@@ -26,9 +26,9 @@
 
 $useSSL = true;
 
-include(dirname(__FILE__) . '/../../../config/config.inc.php');
+include dirname(__FILE__) . '/../../../config/config.inc.php';
 
-$get_vars = (object)$_GET;
+$get_vars = (object) $_GET;
 $callback = new EupagoCallback();
 
 $callback->execute($get_vars);
@@ -60,10 +60,9 @@ class EupagoCallback
             default:
                 die('módulo nao encontrado');
         }
-
         $modulo_ficheiro = '../../eupago' . $modulo . '/eupago' . $modulo . '.php';
         if (file_exists($modulo_ficheiro)) {
-            include(dirname(__FILE__) . '/' . $modulo_ficheiro);
+            include dirname(__FILE__) . '/' . $modulo_ficheiro;
         } else {
             die('módulo nao encontrado ');
         }
@@ -76,7 +75,7 @@ class EupagoCallback
                 $modulo_obj = new eupago_payshop();
                 break;
             case 'mbway':
-                $modulo_obj = new eupago_mbway();
+                $modulo_obj = new EupagoMBway();
                 break;
             case 'paysafecard':
                 $modulo_obj = new eupago_paysafecard();
@@ -95,24 +94,24 @@ class EupagoCallback
         if (class_exists("SOAPClient")) {
             $demo = explode("-", $get_vars->chave_api);
             if ($demo['0'] == 'demo') {
-                $url = 'https://sandbox.eupago.pt/replica.eupagov14.wsdl';
+                $url = 'https://sandbox.eupago.pt/replica.eupagov20.wsdl';
             } else {
-                $url = 'https://clientes.eupago.pt/eupagov16.wsdl';
+                $url = 'https://clientes.eupago.pt/eupagov20.wsdl';
             }
 
             $client = @new SoapClient($url, array('cache_wsdl' => WSDL_CACHE_NONE));
             $arraydados = array(
                 "chave" => $get_vars->chave_api,
                 "referencia" => $get_vars->referencia,
-                "entidade" => $get_vars->entidade
+                "entidade" => $get_vars->entidade,
             );
 
             $result = $client->informacaoReferencia($arraydados);
 
             if ((
-                    $result->estado_referencia == 'paga' ||
-                    $result->estado_referencia == 'em processamento' ||
-                    $result->estado_referencia == 'transferida') &&
+                $result->estado_referencia == 'paga' ||
+                $result->estado_referencia == 'em processamento' ||
+                $result->estado_referencia == 'transferida') &&
                 $result->valor == $get_vars->valor) {
                 $resultado = $this->executeCallback($get_vars, $modulo_obj);
             } else {

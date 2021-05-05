@@ -2,7 +2,7 @@
 <module>
     <name><![CDATA[eupagomb]]></name>
     <displayName><![CDATA[euPago - Multibanco]]></displayName>
-    <version><![CDATA[1.8.2]]></version>
+    <version><![CDATA[1.8.3]]></version>
     <description><![CDATA[Allows your customers to pay with Multibanco entity and reference.]]></description>
     <author><![CDATA[euPago]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
