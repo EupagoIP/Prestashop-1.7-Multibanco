@@ -46,7 +46,7 @@ class EupagoCallback
                 $modulo = 'payshop';
                 break;
             case 'MW:PT':
-                $modulo = 'mbway';
+                $modulo = 'mbw';
                 break;
             case 'PF:PT':
                 $modulo = 'paysafecard';
@@ -74,8 +74,8 @@ class EupagoCallback
             case 'payshop':
                 $modulo_obj = new eupago_payshop();
                 break;
-            case 'mbway':
-                $modulo_obj = new EupagoMBway();
+            case 'mbw':
+                $modulo_obj = new EupagoMBw();
                 break;
             case 'paysafecard':
                 $modulo_obj = new eupago_paysafecard();
