@@ -39,7 +39,7 @@ class EupagoMB extends PaymentModule
         $this->module_key = 'bcfcaaf905b30348b5f3a66365b59e78';
         $this->name = 'eupagomb';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.4';
+        $this->version = '1.8.5';
         $this->author = 'euPago';
         $this->need_instance = 1;
 
@@ -79,24 +79,24 @@ class EupagoMB extends PaymentModule
 
         $this->copyFilesEmails();
 
-        include(dirname(__FILE__) . '/sql/install.php');
+        include dirname(__FILE__) . '/sql/install.php';
 
         return parent::install() &&
-            $this->registerHook('header') &&
-            $this->registerHook('backOfficeHeader') &&
-            $this->registerHook('paymentOptions') &&
-            $this->registerHook('paymentReturn') &&
-            $this->registerHook('displayOrderDetail') &&
-            $this->registerHook('displayAdminOrder') &&
-            $this->registerHook('displayPayment') &&
-            $this->registerHook('displayPaymentReturn');
+        $this->registerHook('header') &&
+        $this->registerHook('backOfficeHeader') &&
+        $this->registerHook('paymentOptions') &&
+        $this->registerHook('paymentReturn') &&
+        $this->registerHook('displayOrderDetail') &&
+        $this->registerHook('displayAdminOrder') &&
+        $this->registerHook('displayPayment') &&
+        $this->registerHook('displayPaymentReturn');
     }
 
     public function createStates()
     {
         $this->order_state = array(
             array('ffff00', '10110', 'euPago - A aguardar pagamento por multibanco', '', 0),
-            array('00ffff', '01110', 'euPago - Confirmado pagamento por multibanco', 'payment', 1)
+            array('00ffff', '01110', 'euPago - Confirmado pagamento por multibanco', 'payment', 1),
         );
         /** OBTER LISTA DOS IDIOMAS  * */
         $languages = Db::getInstance()->ExecuteS(
@@ -175,7 +175,7 @@ class EupagoMB extends PaymentModule
 
         $this->deleteFilesEmails();
 
-        include(dirname(__FILE__) . '/sql/uninstall.php');
+        include dirname(__FILE__) . '/sql/uninstall.php';
 
         return parent::uninstall();
     }
@@ -204,7 +204,7 @@ class EupagoMB extends PaymentModule
          * If values have been submitted in the form, process.
          */
         $notification = null;
-        if (((bool)Tools::isSubmit('submitEupago_multibancoModule')) == true) {
+        if (((bool) Tools::isSubmit('submitEupago_multibancoModule')) == true) {
             $chave = Tools::getValue('EUPAGO_MULTIBANCO_CHAVEAPI');
 
             if (!$chave ||
@@ -221,12 +221,12 @@ class EupagoMB extends PaymentModule
 
         if (isset($notification)) {
             $output = $notification ?
-                $this->displayConfirmation(
-                    $this->l('Settings updated')
-                ) :
-                $this->displayError(
-                    $this->l('Invalid Configuration value')
-                );
+            $this->displayConfirmation(
+                $this->l('Settings updated')
+            ) :
+            $this->displayError(
+                $this->l('Invalid Configuration value')
+            );
             return $output . $this->renderForm();
         } else {
             return $this->renderForm();
@@ -250,7 +250,7 @@ class EupagoMB extends PaymentModule
         foreach (array_keys($form_values) as $key) {
             if ($key == 'EUPAGO_MULTIBANCO_DL_DIAS') {
                 if ((filter_var(Tools::getValue($key), FILTER_VALIDATE_INT) ||
-                        Tools::getValue($key) == '0') && Tools::getValue($key) >= 0) {
+                    Tools::getValue($key) == '0') && Tools::getValue($key) >= 0) {
                     Configuration::updateValue($key, Tools::getValue($key));
                 } else {
                     return false;
@@ -274,7 +274,7 @@ class EupagoMB extends PaymentModule
             'EUPAGO_MULTIBANCO_TIPO_DL' => Configuration::get('EUPAGO_MULTIBANCO_TIPO_DL', null),
             'EUPAGO_MULTIBANCO_DL_DIAS' => Configuration::get('EUPAGO_MULTIBANCO_DL_DIAS', null),
             'EUPAGO_MULTIBANCO_SHOW_DL' => Configuration::get('EUPAGO_MULTIBANCO_SHOW_DL', null),
-            'EUPAGO_MULTIBANCO_TIPO_SD' => Configuration::get('EUPAGO_MULTIBANCO_TIPO_SD', null)
+            'EUPAGO_MULTIBANCO_TIPO_SD' => Configuration::get('EUPAGO_MULTIBANCO_TIPO_SD', null),
 
         );
     }
@@ -324,7 +324,7 @@ class EupagoMB extends PaymentModule
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitEupago_multibancoModule';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
-            . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+        . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = array(
@@ -333,7 +333,7 @@ class EupagoMB extends PaymentModule
             'id_language' => $this->context->language->id,
         );
         return $helper->generateForm(array($this->getApi(), $this->getConfigForm())) .
-            $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
+        $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
     }
 
     /**
@@ -343,12 +343,12 @@ class EupagoMB extends PaymentModule
     {
         $lang = Configuration::get('PS_LANG_DEFAULT', null);
         $sql = 'SELECT * FROM ' .
-            _DB_PREFIX_ . 'order_state_lang,' .
-            _DB_PREFIX_ . 'order_state WHERE ' .
-            _DB_PREFIX_ . 'order_state_lang.id_order_state=' .
-            pSQL(_DB_PREFIX_ . 'order_state.id_order_state') . ' and ' .
-            _DB_PREFIX_ . 'order_state.deleted='. (int)0 . ' and ' .
-            _DB_PREFIX_ . 'order_state_lang.id_lang=' . (int)$lang;
+        _DB_PREFIX_ . 'order_state_lang,' .
+        _DB_PREFIX_ . 'order_state WHERE ' .
+        _DB_PREFIX_ . 'order_state_lang.id_order_state=' .
+        pSQL(_DB_PREFIX_ . 'order_state.id_order_state') . ' and ' .
+        _DB_PREFIX_ . 'order_state.deleted=' . (int) 0 . ' and ' .
+        _DB_PREFIX_ . 'order_state_lang.id_lang=' . (int) $lang;
         $estados = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 
         return array(
@@ -368,8 +368,8 @@ class EupagoMB extends PaymentModule
                         'options' => array(
                             'query' => $estados,
                             'id' => 'id_order_state',
-                            'name' => 'name'
-                        )
+                            'name' => 'name',
+                        ),
                     ),
                     array(
                         'type' => 'select',
@@ -380,8 +380,8 @@ class EupagoMB extends PaymentModule
                         'options' => array(
                             'query' => $estados,
                             'id' => 'id_order_state',
-                            'name' => 'name'
-                        )
+                            'name' => 'name',
+                        ),
                     ),
                     array(
                         'type' => 'switch',
@@ -394,13 +394,13 @@ class EupagoMB extends PaymentModule
                             array(
                                 'id' => 'active_on',
                                 'value' => true,
-                                'label' => $this->l('Enabled')
+                                'label' => $this->l('Enabled'),
                             ),
                             array(
                                 'id' => 'active_off',
                                 'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
+                                'label' => $this->l('Disabled'),
+                            ),
                         ),
                     ),
                     array(
@@ -409,9 +409,9 @@ class EupagoMB extends PaymentModule
                         'class' => 'ndias',
                         'prefix' => '<i class="icon icon-calendar"></i>',
                         'desc' => $this->l(
-                            'If you have payment deadline enable, 
-                            please specify here the number of days that the reference 
-                            is valid for payment (Select 0 if you want to allow payment only in 
+                            'If you have payment deadline enable,
+                            please specify here the number of days that the reference
+                            is valid for payment (Select 0 if you want to allow payment only in
                             same day that the reference is provided)'
                         ),
                         'name' => 'EUPAGO_MULTIBANCO_DL_DIAS',
@@ -428,13 +428,13 @@ class EupagoMB extends PaymentModule
                             array(
                                 'id' => 'active_on',
                                 'value' => true,
-                                'label' => $this->l('Enabled')
+                                'label' => $this->l('Enabled'),
                             ),
                             array(
                                 'id' => 'active_off',
                                 'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
+                                'label' => $this->l('Disabled'),
+                            ),
                         ),
 
                     ),
@@ -449,13 +449,13 @@ class EupagoMB extends PaymentModule
                             array(
                                 'id' => 'active_on',
                                 'value' => true,
-                                'label' => $this->l('Enabled')
+                                'label' => $this->l('Enabled'),
                             ),
                             array(
                                 'id' => 'active_off',
                                 'value' => false,
-                                'label' => $this->l('Disabled')
-                            )
+                                'label' => $this->l('Disabled'),
+                            ),
                         ),
                     ),
                 ),
@@ -505,7 +505,6 @@ class EupagoMB extends PaymentModule
         $formAction = $this->context->link->getModuleLink($this->name, 'confirmation', array(), true);
         $this->smarty->assign(['action' => $formAction]);
 
-
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name)
             ->setLogo(Media::getMediaPath(_PS_MODULE_DIR_ . $this->name . '/views/img/logo_payment.png'))
@@ -516,15 +515,14 @@ class EupagoMB extends PaymentModule
                     'confirmation',
                     array(
                         'cart_id' => Context::getContext()->cart->id,
-                        'secure_key' => Context::getContext()->customer->secure_key
+                        'secure_key' => Context::getContext()->customer->secure_key,
                     ),
                     true
                 )
             );
 
-
         $payment_options = array(
-            $newOption
+            $newOption,
         );
 
         return $payment_options;
@@ -563,7 +561,7 @@ class EupagoMB extends PaymentModule
         //die();
 
         if ($exist) {
-            $result = (object)$exist[0];
+            $result = (object) $exist[0];
             $result->estado = 0;
         } else {
             $result->estado = 1;
@@ -573,9 +571,9 @@ class EupagoMB extends PaymentModule
 
         if ($result->estado != 0) {
             $history = new OrderHistory();
-            $history->id_order = (int)$order->id;
+            $history->id_order = (int) $order->id;
             $erro = "Erro: " . $result->resposta;
-            $history->changeIdOrderState((int)Configuration::get('PS_OS_ERROR'), (int)($order->id));
+            $history->changeIdOrderState((int) Configuration::get('PS_OS_ERROR'), (int) ($order->id));
             $this->smarty->assign('status', 'Nok');
             $this->smarty->assign('erro', $erro);
         } else {
@@ -594,7 +592,7 @@ class EupagoMB extends PaymentModule
                 'reference' => $order->reference,
                 'params' => $params,
                 'total' => Tools::displayPrice($order->total_paid, null, false),
-                'module_dir' => $this->_path
+                'module_dir' => $this->_path,
             )
         );
 
@@ -607,7 +605,7 @@ class EupagoMB extends PaymentModule
 
     public function getOrderIdObjectFromEupagoTable($order_id)
     {
-        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'eupago_multibanco where order_id = ' . (int)$order_id;
+        $sql = 'SELECT * FROM ' . _DB_PREFIX_ . 'eupago_multibanco where order_id = ' . (int) $order_id;
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 
@@ -625,15 +623,14 @@ class EupagoMB extends PaymentModule
                 _PS_MODULE_DIR_ . '/' . $this->name . '/mails/' . $lang->iso_code . '/'
             );
 
-
             $subject = ($lang->iso_code == "pt") ? 'Aguardar Pagamento' : 'Waiting for payment';
             if ($mostrar_data && $email_tpl_vars['{dataLimite}'] != "" &&
                 $email_tpl_vars['{dataLimite}'] != "2099-12-31"
             ) {
                 Mail::Send(
-                    (int)$order->id_lang,
+                    (int) $order->id_lang,
                     'payment_data_limite',
-                    Mail::l($subject, (int)$order->id_lang),
+                    Mail::l($subject, (int) $order->id_lang),
                     $email_tpl_vars,
                     $this->context->customer->email,
                     $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
@@ -643,13 +640,13 @@ class EupagoMB extends PaymentModule
                     null,
                     $diretorio,
                     false,
-                    (int)$order->id_shop
+                    (int) $order->id_shop
                 );
             } else {
                 Mail::Send(
-                    (int)$order->id_lang,
+                    (int) $order->id_lang,
                     'payment_data',
-                    Mail::l($subject, (int)$order->id_lang),
+                    Mail::l($subject, (int) $order->id_lang),
                     $email_tpl_vars,
                     $this->context->customer->email,
                     $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
@@ -659,7 +656,7 @@ class EupagoMB extends PaymentModule
                     null,
                     $diretorio,
                     false,
-                    (int)$order->id_shop
+                    (int) $order->id_shop
                 );
             }
         }
@@ -678,7 +675,7 @@ class EupagoMB extends PaymentModule
             '{referencia}' => $referencia->referencia,
             '{dataLimite}' => $dataLimite,
             '{valor}' => Tools::displayPrice($referencia->valor, $this->context->currency, false),
-            '{this_path}' => _PS_BASE_URL_ . __PS_BASE_URI__ . '/modules/' . $this->name
+            '{this_path}' => _PS_BASE_URL_ . __PS_BASE_URI__ . '/modules/' . $this->name,
         );
         return $data;
     }
@@ -723,7 +720,7 @@ class EupagoMB extends PaymentModule
                     'modules_dir' => $this->_path,
                     'entidade' => $dados[0]['entidade'],
                     'referencia' => $dados[0]['referencia'],
-                    'total' => $dados[0]['valor']
+                    'total' => $dados[0]['valor'],
                 )
             );
 
@@ -748,18 +745,18 @@ class EupagoMB extends PaymentModule
         Tools::clearSmartyCache();
 
         $chave_api = Configuration::get('EUPAGO_MULTIBANCO_CHAVEAPI');
-        $dl = (int)Configuration::get('EUPAGO_MULTIBANCO_TIPO_DL');
-        $ndias_dl = (int)Configuration::get('EUPAGO_MULTIBANCO_DL_DIAS');
-        $duplicados = (int)Configuration::get('EUPAGO_MULTIBANCO_TIPO_SD');
+        $dl = (int) Configuration::get('EUPAGO_MULTIBANCO_TIPO_DL');
+        $ndias_dl = (int) Configuration::get('EUPAGO_MULTIBANCO_DL_DIAS');
+        $duplicados = (int) Configuration::get('EUPAGO_MULTIBANCO_TIPO_SD');
 
         // PREPARA O URL DA CHAMADA
         $demo = explode("-", $chave_api);
         if ($demo['0'] == 'demo') {
             $url = 'https://sandbox.eupago.pt/replica.eupagov20.wsdl';
-            //$url_curl = 'https://sandbox.eupago.pt/clientes/rest_api/multibanco/create';
+            $url_curl = 'https://sandbox.eupago.pt/clientes/rest_api/multibanco/create';
         } else {
             $url = 'https://clientes.eupago.pt/eupagov20.wsdl';
-            //$url_curl = 'https://clientes.eupago.pt/clientes/rest_api/multibanco/create';
+            $url_curl = 'https://clientes.eupago.pt/clientes/rest_api/multibanco/create';
         }
 
         if ($duplicados == "1") {
@@ -778,22 +775,22 @@ class EupagoMB extends PaymentModule
             $arraydados = array(
                 "chave" => $chave_api,
                 "valor" => number_format($total, 2),
-                "id" => (int)($id),
+                "id" => (int) ($id),
                 "data_inicio" => $data_inicio,
                 "data_fim" => $data_fim,
                 "valor_minimo" => number_format($total, 2),
                 "valor_maximo" => number_format($total, 2),
                 "per_dup" => $per_dup,
-                "teste_pagamento" => (int)1
+                "teste_pagamento" => (int) 1,
             );
         } else {
             $tipo = "MB";
             $arraydados = array(
                 "chave" => $chave_api,
                 "valor" => number_format($total, 2),
-                "id" => (int)($id),
+                "id" => (int) ($id),
                 "per_dup" => $per_dup,
-                "teste_pagamento" => 0
+                "teste_pagamento" => 0,
             );
         }
 
@@ -811,6 +808,8 @@ class EupagoMB extends PaymentModule
                 $result->estado = "Falha no serviço SOAP";
             }
         } else {
+            $reposta = $this->curlRequest($url_curl, $arraydados);
+            $result = Tools::jsonDecode($reposta);
         }
 
         if ($result->estado == 0) {
@@ -844,13 +843,46 @@ class EupagoMB extends PaymentModule
             )
         );
     }
+    private function curlRequest($url, $post = null, $retries = 3)
+    {
 
+        $curl = curl_init($url);
+        $result = array();
+        if (is_resource($curl) === true) {
+            curl_setopt($curl, CURLOPT_FAILONERROR, true);
+            curl_setopt($curl, CURLOPT_ENCODING, "");
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($curl, CURLOPT_USERAGENT, "euPago");
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 120);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 120);
+
+            if (isset($post) === true) {
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, (is_array($post) === true) ?
+                http_build_query($post, '', '&') : $post);
+            }
+
+            $result = false;
+
+            while (($result === false) && (--$retries > 0)) {
+                $result['resultado'] = curl_exec($curl);
+                $result['estado'] = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            }
+
+            curl_close($curl);
+        }
+        //var_dump($result);
+        return $result['resultado'];
+    }
     public function updateStatusDbExpirada($order_id)
     {
         Db::getInstance()->update(
             'eupago_multibanco',
             array(
-                'estadoRef' => 'expirada'
+                'estadoRef' => 'expirada',
             ),
             'order_id = ' . $order_id
         );
@@ -881,8 +913,8 @@ class EupagoMB extends PaymentModule
                 $new_history->id_order = $orderId;
 
                 $new_history->changeIdOrderState(
-                    (int)(Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1')),
-                    (int)$orderId,
+                    (int) (Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1')),
+                    (int) $orderId,
                     true
                 );
 
@@ -890,26 +922,26 @@ class EupagoMB extends PaymentModule
                 $subject = ($lang == "pt") ? 'Pagamento bem sucedido' : 'Successful payment';
                 //procurar o email do cliente para enviar lhe a notificação de pagamento bem sucedido
                 $sql = "SELECT " . _DB_PREFIX_ . "customer.email, " . _DB_PREFIX_ . "orders.id_lang," .
-                    _DB_PREFIX_ . "orders.reference FROM " .
-                    _DB_PREFIX_ . "orders," . _DB_PREFIX_ . "customer WHERE " .
-                    _DB_PREFIX_ . "orders.id_order=" . (int)$orderId . " and " .
-                    _DB_PREFIX_ . "orders.id_customer = " . pSQL(_DB_PREFIX_ . "customer.id_customer");
+                _DB_PREFIX_ . "orders.reference FROM " .
+                _DB_PREFIX_ . "orders," . _DB_PREFIX_ . "customer WHERE " .
+                _DB_PREFIX_ . "orders.id_order=" . (int) $orderId . " and " .
+                _DB_PREFIX_ . "orders.id_customer = " . pSQL(_DB_PREFIX_ . "customer.id_customer");
                 $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
 
                 Mail::Send(
-                    (int)$result[0]['id_lang'], // defaut language id
+                    (int) $result[0]['id_lang'], // defaut language id
                     'payment', // email template file to be use
                     $subject, // email subject
                     array(
                         "message" => $subject,
                         "{firstname}" => $this->context->customer->firstname,
                         "{lastname}" => $this->context->customer->lastname,
-                        "{order_name}" => $result[0]['reference']
+                        "{order_name}" => $result[0]['reference'],
                     ),
                     $result[0]['email'], // receiver email address
                     null, //receiver name
                     null, //from email address
-                    null  //from name
+                    null//from name
                 );
                 $this->updateStatusDB($orderId);
                 $this->updateValidateOrder($orderId, $valor);
@@ -927,8 +959,8 @@ class EupagoMB extends PaymentModule
     public function getOrderByReference($referencia, $valor = null)
     {
         $sql = 'SELECT * FROM ' .
-            _DB_PREFIX_ . 'eupago_multibanco where referencia = '
-            . (int)$referencia . ' and valor = ' . (float)$valor;
+        _DB_PREFIX_ . 'eupago_multibanco where referencia = '
+        . (int) $referencia . ' and valor = ' . (float) $valor;
         return Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);
     }
 
@@ -937,7 +969,7 @@ class EupagoMB extends PaymentModule
         Db::getInstance()->update(
             'eupago_multibanco',
             array(
-                'estadoRef' => 'pago'
+                'estadoRef' => 'pago',
             ),
             'order_id = ' . $order_id
         );
@@ -948,8 +980,8 @@ class EupagoMB extends PaymentModule
     public function updateValidateOrder($order_id, $valor)
     {
         $query = "UPDATE `" .
-            _DB_PREFIX_ . "orders` SET total_paid_real=" .
-            (float)$valor . ", valid=1 WHERE id_order = " . (int)$order_id;
+        _DB_PREFIX_ . "orders` SET total_paid_real=" .
+        (float) $valor . ", valid=1 WHERE id_order = " . (int) $order_id;
         Db::getInstance()->Execute($query);
     }
 
@@ -958,7 +990,6 @@ class EupagoMB extends PaymentModule
         if ($tipo_callback != 'expirada') {
             return "tipo de calback invalido";
         }
-
 
         $chaveReg = Configuration::get('EUPAGO_MULTIBANCO_CHAVEAPI');
 
@@ -969,9 +1000,9 @@ class EupagoMB extends PaymentModule
             $orderId = $this->getEupago_multibancoOrderDb($referencia, $valor);
             if (!empty($orderId)) {
                 $new_history = new OrderHistory();
-                $new_history->id_order = (int)$orderId;
+                $new_history->id_order = (int) $orderId;
 
-                $new_history->changeIdOrderState((int)6, $orderId);
+                $new_history->changeIdOrderState((int) 6, $orderId);
                 $new_history->addWithemail(true, null, $context);
 
                 $this->updateEupago_multibancoOrderDb_expirada($orderId);
