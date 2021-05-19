@@ -64,15 +64,19 @@ class EupagoCallback
         if (file_exists($modulo_ficheiro)) {
             include dirname(__FILE__) . '/' . $modulo_ficheiro;
         } else {
-            die('módulo nao encontrado ');
+            $modulo_ficheiro = '../../eupago_' . $modulo . '/eupago_' . $modulo . '.php';
+            if (file_exists($modulo_ficheiro)) {
+                include dirname(__FILE__) . '/' . $modulo_ficheiro;
+            } else {
+                die("Pasta do módulo não encontrada.");
+            }
         }
-
         switch ($modulo) {
             case 'mb':
                 $modulo_obj = new EupagoMB();
                 break;
             case 'payshop':
-                $modulo_obj = new eupago_payshop();
+                $modulo_obj = new Eupago_payshop();
                 break;
             case 'mbw':
                 $modulo_obj = new EupagoMBw();
@@ -107,7 +111,6 @@ class EupagoCallback
             );
 
             $result = $client->informacaoReferencia($arraydados);
-
             if ((
                 $result->estado_referencia == 'paga' ||
                 $result->estado_referencia == 'em processamento' ||
@@ -127,6 +130,7 @@ class EupagoCallback
     // Executa o callback
     public function executeCallback($get_vars, $modulo_obj)
     {
+
         if (isset($get_vars->tipo_callback) && $get_vars->tipo_callback == 'expirada') {
             // comunica expirada
             if (isset($get_vars->referencia, $get_vars->valor, $get_vars->chave_api, $get_vars->identificador)) {
@@ -145,6 +149,7 @@ class EupagoCallback
             }
         } else {
             // comunica pagamento
+
             if (isset($get_vars->referencia, $get_vars->valor, $get_vars->chave_api, $get_vars->identificador)) {
                 $order = new Order($get_vars->identificador);
                 //print_r($modulo_obj->getEmailVars($order,$get_vars->referencia));

@@ -39,7 +39,7 @@ class EupagoMB extends PaymentModule
         $this->module_key = 'bcfcaaf905b30348b5f3a66365b59e78';
         $this->name = 'eupagomb';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.5';
+        $this->version = '1.8.6';
         $this->author = 'euPago';
         $this->need_instance = 1;
 
@@ -583,7 +583,11 @@ class EupagoMB extends PaymentModule
             if ($mostrar_data && isset($result->dataLimite) && $result->dataLimite != "2099-12-31") {
                 $this->smarty->assign('dataLimite', $result->dataLimite);
             }
-            $this->sendEmailPaymentDetails($order, $result);
+            if ((
+                (int) Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1') !== (int) $order->current_state
+            ) && $result->estadoRef == "pendente") {
+                $this->sendEmailPaymentDetails($order, $result);
+            }
         }
 
         $this->smarty->assign(
@@ -774,12 +778,12 @@ class EupagoMB extends PaymentModule
             ) : date('Y-m-d', strtotime('+ 1 day', strtotime($data_inicio)));
             $arraydados = array(
                 "chave" => $chave_api,
-                "valor" => number_format($total, 2),
+                "valor" => $total,
                 "id" => (int) ($id),
                 "data_inicio" => $data_inicio,
                 "data_fim" => $data_fim,
-                "valor_minimo" => number_format($total, 2),
-                "valor_maximo" => number_format($total, 2),
+                "valor_minimo" => $total,
+                "valor_maximo" => $total,
                 "per_dup" => $per_dup,
                 "teste_pagamento" => (int) 1,
             );
@@ -787,7 +791,7 @@ class EupagoMB extends PaymentModule
             $tipo = "MB";
             $arraydados = array(
                 "chave" => $chave_api,
-                "valor" => number_format($total, 2),
+                "valor" => $total,
                 "id" => (int) ($id),
                 "per_dup" => $per_dup,
                 "teste_pagamento" => 0,
@@ -862,7 +866,7 @@ class EupagoMB extends PaymentModule
             if (isset($post) === true) {
                 curl_setopt($curl, CURLOPT_POST, true);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, (is_array($post) === true) ?
-                http_build_query($post, '', '&') : $post);
+                    http_build_query($post, '', '&') : $post);
             }
 
             $result = false;
@@ -894,6 +898,7 @@ class EupagoMB extends PaymentModule
      */
     public function callback($referencia, $valor, $chave, $identificador)
     {
+
         $chave_api = Configuration::get('EUPAGO_MULTIBANCO_CHAVEAPI');
         $context = Context::getContext();
         $context->link = new Link();
@@ -1014,42 +1019,5 @@ class EupagoMB extends PaymentModule
         } else {
             return -1; //Chave inv�lida
         }
-    }
-
-    /**
-     *Check if order id already exist in eupago_multibanco DB
-     */
-    private function curlRequest($url, $post = null, $retries = 3)
-    {
-        $curl = curl_init($url);
-        $result = array();
-        if (is_resource($curl) === true) {
-            curl_setopt($curl, CURLOPT_FAILONERROR, true);
-            curl_setopt($curl, CURLOPT_ENCODING, "");
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_USERAGENT, "euPago");
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 120);
-            curl_setopt($curl, CURLOPT_TIMEOUT, 120);
-
-            if (isset($post) === true) {
-                curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt(
-                    $curl,
-                    CURLOPT_POSTFIELDS,
-                    (is_array($post) === true) ? http_build_query($post, '', '&') : $post
-                );
-            }
-            $result = false;
-            while (($result === false) && (--$retries > 0)) {
-                $result['resultado'] = curl_exec($curl);
-                $result['estado'] = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-            }
-            curl_close($curl);
-        }
-        //var_dump($result);
-        return $result['resultado'];
     }
 }
