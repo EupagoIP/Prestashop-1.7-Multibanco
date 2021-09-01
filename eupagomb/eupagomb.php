@@ -39,7 +39,7 @@ class EupagoMB extends PaymentModule
         $this->module_key = 'bcfcaaf905b30348b5f3a66365b59e78';
         $this->name = 'eupagomb';
         $this->tab = 'payments_gateways';
-        $this->version = '1.8.6';
+        $this->version = '1.8.8';
         $this->author = 'euPago';
         $this->need_instance = 1;
 
@@ -914,14 +914,15 @@ class EupagoMB extends PaymentModule
             }
             $orderId = $identificador;
             if (!empty($orderId)) {
-                $new_history = new OrderHistory();
-                $new_history->id_order = $orderId;
-
-                $new_history->changeIdOrderState(
-                    (int) (Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1')),
-                    (int) $orderId,
-                    true
-                );
+                $query = "UPDATE `" .
+                _DB_PREFIX_ . "orders` SET current_state=" .
+                (int) (Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1')) . " WHERE id_order = " . (int) $orderId;
+                Db::getInstance()->Execute($query);
+                $query = "INSERT INTO `" . _DB_PREFIX_ .
+                "order_history`(id_employee,id_order,id_order_state,date_add) values(0," .
+                $orderId . "," .
+                (int) (Configuration::get('EUPAGO_MULTIBANCO_ESTADO_1')) . ",now());";
+                Db::getInstance()->Execute($query);
 
                 $lang = $this->context->language->iso_code;
                 $subject = ($lang == "pt") ? 'Pagamento bem sucedido' : 'Successful payment';
@@ -951,7 +952,6 @@ class EupagoMB extends PaymentModule
                 $this->updateStatusDB($orderId);
                 $this->updateValidateOrder($orderId, $valor);
                 echo "Atualizada para paga"; //atualizada para paga
-                $new_history->addWithemail();
                 return "Atualizada para paga";
             } else {
                 return "Referencia não encontrada"; //Já paga

@@ -64,6 +64,10 @@ class EupagoCallback
         if (file_exists($modulo_ficheiro)) {
             include dirname(__FILE__) . '/' . $modulo_ficheiro;
         } else {
+            if ($modulo == "mbw") {
+                $modulo = "mbway";
+            }
+
             $modulo_ficheiro = '../../eupago_' . $modulo . '/eupago_' . $modulo . '.php';
             if (file_exists($modulo_ficheiro)) {
                 include dirname(__FILE__) . '/' . $modulo_ficheiro;
@@ -80,6 +84,9 @@ class EupagoCallback
                 break;
             case 'mbw':
                 $modulo_obj = new EupagoMBw();
+                break;
+            case 'mbway':
+                $modulo_obj = new Eupago_MBway();
                 break;
             case 'paysafecard':
                 $modulo_obj = new eupago_paysafecard();

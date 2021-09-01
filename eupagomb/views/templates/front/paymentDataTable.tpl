@@ -48,7 +48,7 @@
     </tr>
     <tr>
         <td style="font-size: xx-small; padding:0; border: 0px; text-align:center;"
-            colspan="3">{l s='The ticket privided by atm machine is your payment prove. Please keep it.' mod='eupagomb'}</td>
+            colspan="3">{l s='The ticket provided by the ATM machine is your payment proof.' mod='eupagomb'}</td>
     </tr>
     <tr>
         {if isset($dataLimite) && $dataLimite != '2099-12-31'}
